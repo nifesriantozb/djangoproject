@@ -52,7 +52,6 @@ pipeline {
                     sh '''
                     oc login --token=$OC_TOKEN --server=https://api.rm1.0a51.p1.openshiftapps.com:6443
                     oc apply -f django-with-config-and-secret-and-hpa.yml
-                    oc get route django
                     '''
                 }
             }
