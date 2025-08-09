@@ -60,13 +60,12 @@ pipeline {
         }
     }
     
-
     post {
         success {
             echo "✅ Image successfully pushed to Docker Hub as ${IMAGE_NAME}:${IMAGE_TAG}"
         }
         failure {
             echo "❌ Build or push failed!"
-        }
-    }
+        }
+    }
 }
