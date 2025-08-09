@@ -50,6 +50,7 @@ pipeline {
             steps {
                 withCredentials([string(credentialsId: TOKEN_CREDENTIALS_ID, variable: 'OC_TOKEN')]) {
                     sh '''
+                    sed -i 's|image: ${IMAGE_NAME}:.*|image: ${IMAGE_NAME}:${IMAGE_TAG}|g' ${MANIFEST_PATH}
                     oc login --token=$OC_TOKEN --server=https://api.rm1.0a51.p1.openshiftapps.com:6443
                     oc apply -f django-with-config-and-secret-and-hpa.yml
                     '''
