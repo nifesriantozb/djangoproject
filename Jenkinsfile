@@ -24,7 +24,7 @@ pipeline {
                 script {
                     sh """
                     docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-                    docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:v${IMAGE_TAG}
+                    docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
                     """
                 }
             }
@@ -40,12 +40,23 @@ pipeline {
                     sh """
                     echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
                     docker push ${IMAGE_NAME}:${IMAGE_TAG}
-                    docker push ${IMAGE_NAME}:v${IMAGE_TAG}
+                    docker push ${IMAGE_NAME}:latest
                     """
                 }
             }
         }
-
+        stage('Update YAML with Latest Tag') {
+            steps {
+                script {
+                    sh """
+                    sed -i 's|_IMAGE_TAG_|${IMAGE_TAG}|' ${MANIFEST_PATH}
+                    """
+                    echo "✅ Placeholder _IMAGE_TAG_ berhasil diganti dengan tag: ${IMAGE_TAG}"
+                    sh "grep 'image:' ${MANIFEST_PATH}"
+                }
+            }
+        }
+        
         stage('Deploy to OpenShift') {
             steps {
                 withCredentials([string(credentialsId: TOKEN_CREDENTIALS_ID, variable: 'OC_TOKEN')]) {
